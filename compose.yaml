@@ -1,0 +1,29 @@
+name: diun
+
+services:
+  diun:
+    image: crazymax/diun:latest
+    restart: unless-stopped
+    command: serve
+    healthcheck:
+      test: ["CMD", "diun", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - type: volume
+        source: diun_data
+        target: /data
+      - type: bind
+        source: ./config/extra_images.yaml
+        target: /extra_images.yaml
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    env_file:
+      - path: ./config/diun.env
+        required: true
+
+volumes:
+  diun_data:
